@@ -1,0 +1,35 @@
+{
+  "name": "elearning-portal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dex-k6n/elearning-portal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dex-k6n/elearning-portal/issues"
+  },
+  "homepage": "https://github.com/dex-k6n/elearning-portal#readme",
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.9",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.2"
+  },
+  "dependencies": {
+    "biome": "^0.2.2"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,json}": [
+      "npx biome check --write --no-errors-on-unmatched"
+    ]
+  }
+}
