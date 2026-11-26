@@ -1,0 +1,1703 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.Assessment",
+    "label": "Create table \"Assessment\"",
+    "summary": "Creates table \"Assessment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Assessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Assessment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assessment\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Assessment\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Assessment\"",
+        "sql": "CREATE TABLE \"public\".\"Assessment\" (\n  \"createdAt\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"createdById\" text NOT NULL,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"title\" text NOT NULL,\n  \"type\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Assessment_type_check_5d154805\" CHECK (\"type\" IN ('PRACTICE', 'TEST'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Assessment\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Assessment\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Assessment\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Assignment",
+    "label": "Create table \"Assignment\"",
+    "summary": "Creates table \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Assignment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Assignment\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Assignment\"",
+        "sql": "CREATE TABLE \"public\".\"Assignment\" (\n  \"assessmentId\" text NOT NULL,\n  \"assignedAt\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"dueDate\" timestamptz(3),\n  \"id\" text NOT NULL,\n  \"studentId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Assignment\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Assignment\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Question",
+    "label": "Create table \"Question\"",
+    "summary": "Creates table \"Question\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Question"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Question\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Question\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Question\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Question\"",
+        "sql": "CREATE TABLE \"public\".\"Question\" (\n  \"assessmentId\" text NOT NULL,\n  \"correctAnswer\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"options\" json NOT NULL,\n  \"orderIndex\" int4 NOT NULL,\n  \"points\" int4 DEFAULT 1 NOT NULL,\n  \"prompt\" text NOT NULL,\n  \"skillId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Question\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Question\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Question\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Skill",
+    "label": "Create table \"Skill\"",
+    "summary": "Creates table \"Skill\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Skill"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Skill\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Skill\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Skill\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Skill\"",
+        "sql": "CREATE TABLE \"public\".\"Skill\" (\n  \"code\" text NOT NULL,\n  \"createdAt\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Skill\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Skill\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Skill\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.StudentMastery",
+    "label": "Create table \"StudentMastery\"",
+    "summary": "Creates table \"StudentMastery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "StudentMastery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"StudentMastery\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentMastery\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"StudentMastery\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"StudentMastery\"",
+        "sql": "CREATE TABLE \"public\".\"StudentMastery\" (\n  \"attemptsCount\" int4 DEFAULT 0 NOT NULL,\n  \"id\" text NOT NULL,\n  \"lastPracticed\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"masteryScore\" float8 DEFAULT 0 NOT NULL,\n  \"skillId\" text NOT NULL,\n  \"studentId\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"StudentMastery\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"StudentMastery\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"StudentMastery\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Submission",
+    "label": "Create table \"Submission\"",
+    "summary": "Creates table \"Submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Submission\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Submission\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Submission\"",
+        "sql": "CREATE TABLE \"public\".\"Submission\" (\n  \"assessmentId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"maxScore\" float8 NOT NULL,\n  \"score\" float8 NOT NULL,\n  \"studentId\" text NOT NULL,\n  \"submittedAt\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Submission\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Submission\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Submission\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.SubmissionAnswer",
+    "label": "Create table \"SubmissionAnswer\"",
+    "summary": "Creates table \"SubmissionAnswer\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SubmissionAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SubmissionAnswer\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SubmissionAnswer\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"SubmissionAnswer\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SubmissionAnswer\"",
+        "sql": "CREATE TABLE \"public\".\"SubmissionAnswer\" (\n  \"id\" text NOT NULL,\n  \"isCorrect\" bool NOT NULL,\n  \"questionId\" text NOT NULL,\n  \"selectedAnswer\" text NOT NULL,\n  \"submissionId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SubmissionAnswer\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"SubmissionAnswer\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"SubmissionAnswer\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.User",
+    "label": "Create table \"User\"",
+    "summary": "Creates table \"User\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"User\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"User\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"User\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"User\"",
+        "sql": "CREATE TABLE \"public\".\"User\" (\n  \"createdAt\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"email\" text NOT NULL,\n  \"fullName\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"passwordHash\" text NOT NULL,\n  \"role\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"User_role_check_4fa0da15\" CHECK (\"role\" IN ('ADMIN', 'TEACHER', 'STUDENT'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"User\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"User\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"User\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "unique.Assignment.Assignment_assessmentId_studentId_key",
+    "label": "Add unique constraint on \"Assignment\" (assessmentId, studentId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Assignment_assessmentId_studentId_key",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Assignment_assessmentId_studentId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_assessmentId_studentId_key",
+          "public",
+          "\"public\".\"Assignment\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Assignment_assessmentId_studentId_key\" on \"Assignment\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Assignment_assessmentId_studentId_key\"",
+        "sql": "ALTER TABLE \"public\".\"Assignment\" ADD CONSTRAINT \"Assignment_assessmentId_studentId_key\" UNIQUE (\"assessmentId\", \"studentId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Assignment_assessmentId_studentId_key\" exists on (assessmentId, studentId)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Assignment_assessmentId_studentId_key",
+          "public",
+          "\"public\".\"Assignment\"",
+          "u",
+          "[\"assessmentId\",\"studentId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Skill.Skill_code_key",
+    "label": "Add unique constraint on \"Skill\" (code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Skill_code_key",
+        "table": "Skill"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Skill_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Skill_code_key",
+          "public",
+          "\"public\".\"Skill\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Skill_code_key\" on \"Skill\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Skill_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"Skill\" ADD CONSTRAINT \"Skill_code_key\" UNIQUE (\"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Skill_code_key\" exists on (code)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Skill_code_key",
+          "public",
+          "\"public\".\"Skill\"",
+          "u",
+          "[\"code\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.StudentMastery.StudentMastery_studentId_skillId_key",
+    "label": "Add unique constraint on \"StudentMastery\" (studentId, skillId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "StudentMastery_studentId_skillId_key",
+        "table": "StudentMastery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"StudentMastery_studentId_skillId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentMastery_studentId_skillId_key",
+          "public",
+          "\"public\".\"StudentMastery\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"StudentMastery_studentId_skillId_key\" on \"StudentMastery\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"StudentMastery_studentId_skillId_key\"",
+        "sql": "ALTER TABLE \"public\".\"StudentMastery\" ADD CONSTRAINT \"StudentMastery_studentId_skillId_key\" UNIQUE (\"studentId\", \"skillId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"StudentMastery_studentId_skillId_key\" exists on (studentId, skillId)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "StudentMastery_studentId_skillId_key",
+          "public",
+          "\"public\".\"StudentMastery\"",
+          "u",
+          "[\"studentId\",\"skillId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.User.User_email_key",
+    "label": "Add unique constraint on \"User\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "User_email_key",
+        "table": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"User_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "User_email_key",
+          "public",
+          "\"public\".\"User\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"User_email_key\" on \"User\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"User_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"User\" ADD CONSTRAINT \"User_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"User_email_key\" exists on (email)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "User_email_key",
+          "public",
+          "\"public\".\"User\"",
+          "u",
+          "[\"email\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assessment.Assessment_createdById_idx_8bf640ed",
+    "label": "Create index \"Assessment_createdById_idx_8bf640ed\" on \"Assessment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assessment_createdById_idx_8bf640ed",
+        "table": "Assessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assessment_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assessment_createdById_idx_8bf640ed\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Assessment_createdById_idx_8bf640ed\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assessment_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"Assessment_createdById_idx_8bf640ed\" ON \"public\".\"Assessment\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assessment_createdById_idx_8bf640ed\" exists on \"Assessment\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Assessment_createdById_idx_8bf640ed\"",
+          "i",
+          "I",
+          "\"public\".\"Assessment\"",
+          "btree",
+          "[\"createdById\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_assessmentId_idx_1fe05216",
+    "label": "Create index \"Assignment_assessmentId_idx_1fe05216\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_assessmentId_idx_1fe05216",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_assessmentId_idx_1fe05216\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_assessmentId_idx_1fe05216\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Assignment_assessmentId_idx_1fe05216\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_assessmentId_idx_1fe05216\"",
+        "sql": "CREATE INDEX \"Assignment_assessmentId_idx_1fe05216\" ON \"public\".\"Assignment\" (\"assessmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_assessmentId_idx_1fe05216\" exists on \"Assignment\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_assessmentId_idx_1fe05216\"",
+          "i",
+          "I",
+          "\"public\".\"Assignment\"",
+          "btree",
+          "[\"assessmentId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_studentId_idx_bf255322",
+    "label": "Create index \"Assignment_studentId_idx_bf255322\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_studentId_idx_bf255322",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_studentId_idx_bf255322\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Assignment_studentId_idx_bf255322\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"Assignment_studentId_idx_bf255322\" ON \"public\".\"Assignment\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_studentId_idx_bf255322\" exists on \"Assignment\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_studentId_idx_bf255322\"",
+          "i",
+          "I",
+          "\"public\".\"Assignment\"",
+          "btree",
+          "[\"studentId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Question.Question_assessmentId_idx_1fe05216",
+    "label": "Create index \"Question_assessmentId_idx_1fe05216\" on \"Question\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Question_assessmentId_idx_1fe05216",
+        "table": "Question"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Question_assessmentId_idx_1fe05216\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Question_assessmentId_idx_1fe05216\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Question_assessmentId_idx_1fe05216\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Question_assessmentId_idx_1fe05216\"",
+        "sql": "CREATE INDEX \"Question_assessmentId_idx_1fe05216\" ON \"public\".\"Question\" (\"assessmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Question_assessmentId_idx_1fe05216\" exists on \"Question\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Question_assessmentId_idx_1fe05216\"",
+          "i",
+          "I",
+          "\"public\".\"Question\"",
+          "btree",
+          "[\"assessmentId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Question.Question_skillId_idx_6e19993d",
+    "label": "Create index \"Question_skillId_idx_6e19993d\" on \"Question\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Question_skillId_idx_6e19993d",
+        "table": "Question"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Question_skillId_idx_6e19993d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Question_skillId_idx_6e19993d\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Question_skillId_idx_6e19993d\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Question_skillId_idx_6e19993d\"",
+        "sql": "CREATE INDEX \"Question_skillId_idx_6e19993d\" ON \"public\".\"Question\" (\"skillId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Question_skillId_idx_6e19993d\" exists on \"Question\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Question_skillId_idx_6e19993d\"",
+          "i",
+          "I",
+          "\"public\".\"Question\"",
+          "btree",
+          "[\"skillId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentMastery.StudentMastery_skillId_idx_6e19993d",
+    "label": "Create index \"StudentMastery_skillId_idx_6e19993d\" on \"StudentMastery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentMastery_skillId_idx_6e19993d",
+        "table": "StudentMastery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentMastery_skillId_idx_6e19993d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentMastery_skillId_idx_6e19993d\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"StudentMastery_skillId_idx_6e19993d\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentMastery_skillId_idx_6e19993d\"",
+        "sql": "CREATE INDEX \"StudentMastery_skillId_idx_6e19993d\" ON \"public\".\"StudentMastery\" (\"skillId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentMastery_skillId_idx_6e19993d\" exists on \"StudentMastery\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"StudentMastery_skillId_idx_6e19993d\"",
+          "i",
+          "I",
+          "\"public\".\"StudentMastery\"",
+          "btree",
+          "[\"skillId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentMastery.StudentMastery_studentId_idx_bf255322",
+    "label": "Create index \"StudentMastery_studentId_idx_bf255322\" on \"StudentMastery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentMastery_studentId_idx_bf255322",
+        "table": "StudentMastery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentMastery_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentMastery_studentId_idx_bf255322\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"StudentMastery_studentId_idx_bf255322\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentMastery_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"StudentMastery_studentId_idx_bf255322\" ON \"public\".\"StudentMastery\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentMastery_studentId_idx_bf255322\" exists on \"StudentMastery\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"StudentMastery_studentId_idx_bf255322\"",
+          "i",
+          "I",
+          "\"public\".\"StudentMastery\"",
+          "btree",
+          "[\"studentId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Submission.Submission_assessmentId_idx_1fe05216",
+    "label": "Create index \"Submission_assessmentId_idx_1fe05216\" on \"Submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Submission_assessmentId_idx_1fe05216",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Submission_assessmentId_idx_1fe05216\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Submission_assessmentId_idx_1fe05216\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Submission_assessmentId_idx_1fe05216\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Submission_assessmentId_idx_1fe05216\"",
+        "sql": "CREATE INDEX \"Submission_assessmentId_idx_1fe05216\" ON \"public\".\"Submission\" (\"assessmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Submission_assessmentId_idx_1fe05216\" exists on \"Submission\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Submission_assessmentId_idx_1fe05216\"",
+          "i",
+          "I",
+          "\"public\".\"Submission\"",
+          "btree",
+          "[\"assessmentId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Submission.Submission_studentId_idx_bf255322",
+    "label": "Create index \"Submission_studentId_idx_bf255322\" on \"Submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Submission_studentId_idx_bf255322",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Submission_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Submission_studentId_idx_bf255322\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Submission_studentId_idx_bf255322\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Submission_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"Submission_studentId_idx_bf255322\" ON \"public\".\"Submission\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Submission_studentId_idx_bf255322\" exists on \"Submission\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Submission_studentId_idx_bf255322\"",
+          "i",
+          "I",
+          "\"public\".\"Submission\"",
+          "btree",
+          "[\"studentId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SubmissionAnswer.SubmissionAnswer_questionId_idx_fdb42076",
+    "label": "Create index \"SubmissionAnswer_questionId_idx_fdb42076\" on \"SubmissionAnswer\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SubmissionAnswer_questionId_idx_fdb42076",
+        "table": "SubmissionAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SubmissionAnswer_questionId_idx_fdb42076\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SubmissionAnswer_questionId_idx_fdb42076\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"SubmissionAnswer_questionId_idx_fdb42076\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SubmissionAnswer_questionId_idx_fdb42076\"",
+        "sql": "CREATE INDEX \"SubmissionAnswer_questionId_idx_fdb42076\" ON \"public\".\"SubmissionAnswer\" (\"questionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SubmissionAnswer_questionId_idx_fdb42076\" exists on \"SubmissionAnswer\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"SubmissionAnswer_questionId_idx_fdb42076\"",
+          "i",
+          "I",
+          "\"public\".\"SubmissionAnswer\"",
+          "btree",
+          "[\"questionId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SubmissionAnswer.SubmissionAnswer_submissionId_idx_89cd3f4e",
+    "label": "Create index \"SubmissionAnswer_submissionId_idx_89cd3f4e\" on \"SubmissionAnswer\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SubmissionAnswer_submissionId_idx_89cd3f4e",
+        "table": "SubmissionAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SubmissionAnswer_submissionId_idx_89cd3f4e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SubmissionAnswer_submissionId_idx_89cd3f4e\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"SubmissionAnswer_submissionId_idx_89cd3f4e\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SubmissionAnswer_submissionId_idx_89cd3f4e\"",
+        "sql": "CREATE INDEX \"SubmissionAnswer_submissionId_idx_89cd3f4e\" ON \"public\".\"SubmissionAnswer\" (\"submissionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SubmissionAnswer_submissionId_idx_89cd3f4e\" exists on \"SubmissionAnswer\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"SubmissionAnswer_submissionId_idx_89cd3f4e\"",
+          "i",
+          "I",
+          "\"public\".\"SubmissionAnswer\"",
+          "btree",
+          "[\"submissionId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Assessment.Assessment_createdById_fkey",
+    "label": "Add foreign key \"Assessment_createdById_fkey\" on \"Assessment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Assessment_createdById_fkey",
+        "table": "Assessment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Assessment_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assessment_createdById_fkey",
+          "public",
+          "\"public\".\"Assessment\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Assessment_createdById_fkey\" on \"Assessment\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Assessment_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Assessment\"\nADD CONSTRAINT \"Assessment_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Assessment_createdById_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Assessment_createdById_fkey",
+          "public",
+          "\"public\".\"Assessment\"",
+          "f",
+          "[\"createdById\"]",
+          "\"public\".\"User\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Assignment.Assignment_assessmentId_fkey",
+    "label": "Add foreign key \"Assignment_assessmentId_fkey\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Assignment_assessmentId_fkey",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Assignment_assessmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_assessmentId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Assignment_assessmentId_fkey\" on \"Assignment\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Assignment_assessmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Assignment\"\nADD CONSTRAINT \"Assignment_assessmentId_fkey\"\nFOREIGN KEY (\"assessmentId\")\nREFERENCES \"public\".\"Assessment\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Assignment_assessmentId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Assignment_assessmentId_fkey",
+          "public",
+          "\"public\".\"Assignment\"",
+          "f",
+          "[\"assessmentId\"]",
+          "\"public\".\"Assessment\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Assignment.Assignment_studentId_fkey",
+    "label": "Add foreign key \"Assignment_studentId_fkey\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Assignment_studentId_fkey",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Assignment_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_studentId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Assignment_studentId_fkey\" on \"Assignment\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Assignment_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Assignment\"\nADD CONSTRAINT \"Assignment_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"User\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Assignment_studentId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Assignment_studentId_fkey",
+          "public",
+          "\"public\".\"Assignment\"",
+          "f",
+          "[\"studentId\"]",
+          "\"public\".\"User\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Question.Question_assessmentId_fkey",
+    "label": "Add foreign key \"Question_assessmentId_fkey\" on \"Question\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Question_assessmentId_fkey",
+        "table": "Question"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Question_assessmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Question_assessmentId_fkey",
+          "public",
+          "\"public\".\"Question\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Question_assessmentId_fkey\" on \"Question\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Question_assessmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Question\"\nADD CONSTRAINT \"Question_assessmentId_fkey\"\nFOREIGN KEY (\"assessmentId\")\nREFERENCES \"public\".\"Assessment\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Question_assessmentId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Question_assessmentId_fkey",
+          "public",
+          "\"public\".\"Question\"",
+          "f",
+          "[\"assessmentId\"]",
+          "\"public\".\"Assessment\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Question.Question_skillId_fkey",
+    "label": "Add foreign key \"Question_skillId_fkey\" on \"Question\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Question_skillId_fkey",
+        "table": "Question"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Question_skillId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Question_skillId_fkey",
+          "public",
+          "\"public\".\"Question\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Question_skillId_fkey\" on \"Question\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Question_skillId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Question\"\nADD CONSTRAINT \"Question_skillId_fkey\"\nFOREIGN KEY (\"skillId\")\nREFERENCES \"public\".\"Skill\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Question_skillId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Question_skillId_fkey",
+          "public",
+          "\"public\".\"Question\"",
+          "f",
+          "[\"skillId\"]",
+          "\"public\".\"Skill\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentMastery.StudentMastery_studentId_fkey",
+    "label": "Add foreign key \"StudentMastery_studentId_fkey\" on \"StudentMastery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentMastery_studentId_fkey",
+        "table": "StudentMastery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentMastery_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentMastery_studentId_fkey",
+          "public",
+          "\"public\".\"StudentMastery\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"StudentMastery_studentId_fkey\" on \"StudentMastery\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentMastery_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentMastery\"\nADD CONSTRAINT \"StudentMastery_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"User\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentMastery_studentId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "StudentMastery_studentId_fkey",
+          "public",
+          "\"public\".\"StudentMastery\"",
+          "f",
+          "[\"studentId\"]",
+          "\"public\".\"User\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentMastery.StudentMastery_skillId_fkey",
+    "label": "Add foreign key \"StudentMastery_skillId_fkey\" on \"StudentMastery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentMastery_skillId_fkey",
+        "table": "StudentMastery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentMastery_skillId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentMastery_skillId_fkey",
+          "public",
+          "\"public\".\"StudentMastery\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"StudentMastery_skillId_fkey\" on \"StudentMastery\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentMastery_skillId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentMastery\"\nADD CONSTRAINT \"StudentMastery_skillId_fkey\"\nFOREIGN KEY (\"skillId\")\nREFERENCES \"public\".\"Skill\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentMastery_skillId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "StudentMastery_skillId_fkey",
+          "public",
+          "\"public\".\"StudentMastery\"",
+          "f",
+          "[\"skillId\"]",
+          "\"public\".\"Skill\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Submission.Submission_assessmentId_fkey",
+    "label": "Add foreign key \"Submission_assessmentId_fkey\" on \"Submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Submission_assessmentId_fkey",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Submission_assessmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Submission_assessmentId_fkey",
+          "public",
+          "\"public\".\"Submission\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Submission_assessmentId_fkey\" on \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Submission_assessmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Submission\"\nADD CONSTRAINT \"Submission_assessmentId_fkey\"\nFOREIGN KEY (\"assessmentId\")\nREFERENCES \"public\".\"Assessment\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Submission_assessmentId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Submission_assessmentId_fkey",
+          "public",
+          "\"public\".\"Submission\"",
+          "f",
+          "[\"assessmentId\"]",
+          "\"public\".\"Assessment\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Submission.Submission_studentId_fkey",
+    "label": "Add foreign key \"Submission_studentId_fkey\" on \"Submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Submission_studentId_fkey",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Submission_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Submission_studentId_fkey",
+          "public",
+          "\"public\".\"Submission\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Submission_studentId_fkey\" on \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Submission_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Submission\"\nADD CONSTRAINT \"Submission_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"User\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Submission_studentId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Submission_studentId_fkey",
+          "public",
+          "\"public\".\"Submission\"",
+          "f",
+          "[\"studentId\"]",
+          "\"public\".\"User\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SubmissionAnswer.SubmissionAnswer_submissionId_fkey",
+    "label": "Add foreign key \"SubmissionAnswer_submissionId_fkey\" on \"SubmissionAnswer\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SubmissionAnswer_submissionId_fkey",
+        "table": "SubmissionAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SubmissionAnswer_submissionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SubmissionAnswer_submissionId_fkey",
+          "public",
+          "\"public\".\"SubmissionAnswer\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"SubmissionAnswer_submissionId_fkey\" on \"SubmissionAnswer\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SubmissionAnswer_submissionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SubmissionAnswer\"\nADD CONSTRAINT \"SubmissionAnswer_submissionId_fkey\"\nFOREIGN KEY (\"submissionId\")\nREFERENCES \"public\".\"Submission\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SubmissionAnswer_submissionId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "SubmissionAnswer_submissionId_fkey",
+          "public",
+          "\"public\".\"SubmissionAnswer\"",
+          "f",
+          "[\"submissionId\"]",
+          "\"public\".\"Submission\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SubmissionAnswer.SubmissionAnswer_questionId_fkey",
+    "label": "Add foreign key \"SubmissionAnswer_questionId_fkey\" on \"SubmissionAnswer\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SubmissionAnswer_questionId_fkey",
+        "table": "SubmissionAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SubmissionAnswer_questionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SubmissionAnswer_questionId_fkey",
+          "public",
+          "\"public\".\"SubmissionAnswer\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"SubmissionAnswer_questionId_fkey\" on \"SubmissionAnswer\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SubmissionAnswer_questionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SubmissionAnswer\"\nADD CONSTRAINT \"SubmissionAnswer_questionId_fkey\"\nFOREIGN KEY (\"questionId\")\nREFERENCES \"public\".\"Question\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SubmissionAnswer_questionId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "SubmissionAnswer_questionId_fkey",
+          "public",
+          "\"public\".\"SubmissionAnswer\"",
+          "f",
+          "[\"questionId\"]",
+          "\"public\".\"Question\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,121 @@
+// use prisma-8
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AssessmentType {
+  PRACTICE
+  TEST
+}
+
+model User {
+  id           String   @id @onCreate(uuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  role         Role
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @onCreate(now()) @onUpdate(now())
+
+  // Teacher relations
+  createdAssessments Assessment[] @relation("TeacherAssessments")
+
+  // Student relations
+  assignments Assignment[]
+  submissions Submission[]
+  masteries   StudentMastery[]
+}
+
+model Skill {
+  id          String   @id @onCreate(uuid())
+  code        String   @unique // e.g., "ALG_LINEAR_EQ_1"
+  name        String // e.g., "Solving Single-Variable Linear Equations"
+  description String?
+  createdAt   DateTime @default(now())
+
+  questions Question[]
+  masteries StudentMastery[]
+}
+
+model Assessment {
+  id          String         @id @onCreate(uuid())
+  title       String
+  description String?
+  type        AssessmentType // PRACTICE (summary results) or TEST (detailed diagnostics)
+  createdById String
+  createdBy   User           @relation("TeacherAssessments", fields: [createdById], references: [id])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @onCreate(now()) @onUpdate(now())
+
+  questions   Question[]
+  assignments Assignment[]
+  submissions Submission[]
+}
+
+model Question {
+  id            String     @id @onCreate(uuid())
+  assessmentId  String
+  assessment    Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  skillId       String
+  skill         Skill      @relation(fields: [skillId], references: [id])
+  prompt        String
+  options       Json // Array of choices, e.g., ["x = 2", "x = 4", "x = -2", "x = 0"]
+  correctAnswer String
+  points        Int        @default(1)
+  orderIndex    Int
+
+  answers SubmissionAnswer[]
+}
+
+model Assignment {
+  id           String     @id @onCreate(uuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  dueDate      DateTime?
+  assignedAt   DateTime   @default(now())
+
+  @@unique([assessmentId, studentId])
+}
+
+model Submission {
+  id           String     @id @onCreate(uuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  score        Float
+  maxScore     Float
+  submittedAt  DateTime   @default(now())
+
+  answers SubmissionAnswer[]
+}
+
+model SubmissionAnswer {
+  id             String     @id @onCreate(uuid())
+  submissionId   String
+  submission     Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  questionId     String
+  question       Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedAnswer String
+  isCorrect      Boolean
+}
+
+model StudentMastery {
+  id            String   @id @onCreate(uuid())
+  studentId     String
+  student       User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  skillId       String
+  skill         Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  masteryScore  Float    @default(0.0) // 0.0 to 1.0 updated asynchronously by Python service
+  attemptsCount Int      @default(0)
+  lastPracticed DateTime @default(now())
+  updatedAt     DateTime @onCreate(now()) @onUpdate(now())
+
+  @@unique([studentId, skillId])
+}
