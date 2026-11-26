@@ -87,7 +87,7 @@ npx prisma migration status    # Show migration status
 |---|---|
 | [`prisma/schema.prisma`](prisma/schema.prisma) | Your data contract — define your models here |
 | [`prisma.config.ts`](prisma.config.ts) | CLI configuration |
-| [`prisma/db.ts`](prisma/db.ts) | Database client — `import { db } from './prisma/db'` |
+| [`src/generated/prisma/db.ts`](src/generated/prisma/db.ts) | Database client — `import { db } from './prisma/db'` |
 | `prisma/contract.json` | Compiled contract (generated) |
 | `prisma/contract.d.ts` | Contract types (generated) |
 
