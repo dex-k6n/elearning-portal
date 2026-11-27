@@ -1,7 +1,7 @@
-### 1. Health Check
+### health check
 GET http://localhost:4000/health
 
-### 2. Register an Admin
+### admin register
 POST http://localhost:4000/api/auth/register
 Content-Type: application/json
 
@@ -12,7 +12,7 @@ Content-Type: application/json
   "role": "ADMIN"
 }
 
-### 3. Login as Admin (captures token automatically)
+### admin login
 POST http://localhost:4000/api/auth/login
 Content-Type: application/json
 
@@ -23,7 +23,7 @@ Content-Type: application/json
 
 > {% client.global.set("admin_token", response.body.token); %}
 
-### 4. Admin Creates a Micro-Skill (Should return 201)
+### create micro-skill as admin (Should return 201)
 POST http://localhost:4000/api/admin/skills
 Authorization: Bearer {{admin_token}}
 Content-Type: application/json
@@ -34,11 +34,11 @@ Content-Type: application/json
   "description": "Solving equations of the form ax + b = c"
 }
 
-### 5. Verify Admin Isolation from Content (Should return 403 Forbidden)
+### verify admin access to content (Should return 403 Forbidden)
 GET http://localhost:4000/api/assessments
 Authorization: Bearer {{admin_token}}
 
-### 6. Register a Teacher
+### teacher register
 POST http://localhost:4000/api/auth/register
 Content-Type: application/json
 
@@ -49,7 +49,7 @@ Content-Type: application/json
   "role": "TEACHER"
 }
 
-### 7. Login as Teacher
+### teacher login
 POST http://localhost:4000/api/auth/login
 Content-Type: application/json
 
@@ -60,6 +60,112 @@ Content-Type: application/json
 
 > {% client.global.set("teacher_token", response.body.token); %}
 
-### 8. Teacher Fetches Skills (Should return 200)
+### fetch skills as teacher (Should return 200)
 GET http://localhost:4000/api/assessments/skills
 Authorization: Bearer {{teacher_token}}
+
+
+### 1. Login as Teacher
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "teacher@portal.edu",
+  "password": "Teacher123!"
+}
+
+> {% client.global.set("teacherToken", response.body.token); %}
+
+### 2. Login as Admin
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@portal.edu",
+  "password": "Admin123!"
+}
+
+> {% client.global.set("adminToken", response.body.token); %}
+
+### 3. List Skills (as Admin) & Capture Skill IDs
+GET http://localhost:4000/api/admin/skills
+Authorization: Bearer {{adminToken}}
+
+> {%
+    const alg01 = response.body.skills.find(s => s.code === "ALG-01");
+    const alg02 = response.body.skills.find(s => s.code === "ALG-02");
+    if (alg01) client.global.set("alg01SkillId", alg01.id);
+    if (alg02) client.global.set("alg02SkillId", alg02.id);
+%}
+
+### 4. Create Assessment (as Teacher) & Capture Question IDs
+POST http://localhost:4000/api/assessments
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "title": "Algebra Diagnostic Quiz",
+  "description": "Covers linear and quadratic equations",
+  "type": "TEST",
+  "questions": [
+    {
+      "skillId": "{{alg01SkillId}}",
+      "prompt": "Solve for x: 2x + 6 = 14",
+      "options": ["x = 3", "x = 4", "x = 5", "x = 10"],
+      "correctAnswer": "x = 4",
+      "points": 2
+    },
+    {
+      "skillId": "{{alg02SkillId}}",
+      "prompt": "What are the roots of x^2 - 5x + 6 = 0?",
+      "options": ["1 and 6", "2 and 3", "-2 and -3", "5 and 1"],
+      "correctAnswer": "2 and 3",
+      "points": 3
+    }
+  ]
+}
+
+> {%
+    if (response.body.assessment) {
+        client.global.set("assessmentId", response.body.assessment.id);
+        const q1 = response.body.assessment.questions.find(q => q.orderIndex === 0);
+        const q2 = response.body.assessment.questions.find(q => q.orderIndex === 1);
+        if (q1) client.global.set("q1Id", q1.id);
+        if (q2) client.global.set("q2Id", q2.id);
+    }
+%}
+
+### 5. Login as Student
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student@portal.edu",
+  "password": "Student123!"
+}
+
+> {%
+    client.global.set("studentToken", response.body.token);
+    client.global.set("studentId", response.body.user.id);
+%}
+
+### 6. Assign Assessment to Student (as Teacher)
+POST http://localhost:4000/api/assessments/{{assessmentId}}/assign
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "studentIds": ["{{studentId}}"]
+}
+
+### 7. Submit Assessment (as Student)
+POST http://localhost:4000/api/assessments/{{assessmentId}}/submit
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [
+    { "questionId": "{{q1Id}}", "selectedAnswer": "x = 4" },
+    { "questionId": "{{q2Id}}", "selectedAnswer": "1 and 6" }
+  ]
+}
